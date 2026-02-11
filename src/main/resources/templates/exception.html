@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Страница для перенаправления при ошибке</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 2px solid #ff6b6b;
+            border-radius: 10px;
+            background-color: #fff5f5;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #4a90e2;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #3a7bc8;
+        }
+
+        .button-register {
+            background-color: #34c759;
+        }
+
+        .button-register:hover {
+            background-color: #28a745;
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <h1>Ошибка регистрации, авторизации или вы отключили cookies</h1>
+
+    <div class="error-message">
+        <h3>Возможные причины:</h3>
+        <ul>
+            <li>произошла какая-то ошибка</li>
+        </ul>
+    </div>
+
+    <div class="buttons">
+        <a href="/register" class="button button-register">Вернуться к регистрации</a>
+        <a href="/autentificate" class="button">Вернуться к авторизации</a>
+        <a href="/" class="button">На главную</a>
+    </div>
+</div>
+</body>
+</html>

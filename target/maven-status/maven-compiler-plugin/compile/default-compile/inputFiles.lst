@@ -1,0 +1,15 @@
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\security\config\SecurityConfiguration.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\config\WebConfig.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\security\config\ApplicationConfig.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\security\JwtService.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\model\responce\AuthenticationRequest.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\security\JwtAuthenticationToken.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\model\UserRole.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\entity\UserEntityInfo.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\model\UserDto.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\CloudApplication.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\security\config\JwtAuthentificationFilter.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\model\responce\AuthenticationResponce.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\security\UserDetailService.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\model\responce\RegisterRequest.java
+C:\Users\Test\OpenideProjects\Cloud\src\main\java\learn\Cloud\repository\UserRepository.java
