@@ -7,6 +7,6 @@ import learn.Cloud.model.responce.RegisterRequest;
 
 public interface AuthService {
     AuthenticationResponce registrationNewUser (RegisterRequest request);
-    String authUser(AuthenticationRequest request);
+    String authUser(String email, String password);
 
 }

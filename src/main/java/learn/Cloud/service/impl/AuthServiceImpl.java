@@ -49,17 +49,17 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String authUser(AuthenticationRequest request) {
+    public String authUser(String email, String password) {
 
 //        AuthenticationResponce
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
+                        email,
+                        password
                 )
         );
 
-        var user = userRepository.findUserEntitiesByEmail(request.getEmail()).orElseThrow();
+        var user = userRepository.findUserEntitiesByEmail(email).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
 //        return AuthenticationResponce.builder()
 //                .token(jwtToken)

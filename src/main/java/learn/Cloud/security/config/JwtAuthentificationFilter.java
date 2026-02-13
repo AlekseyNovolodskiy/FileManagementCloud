@@ -68,4 +68,10 @@ public class JwtAuthentificationFilter extends OncePerRequestFilter {
 
 
     }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        // ✅ Не фильтровать ВСЕ запросы для теста
+        return true;  // true = фильтр отключен полностью
+    }
 }

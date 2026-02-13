@@ -8,6 +8,7 @@ import learn.Cloud.service.FileManagementService;
 import learn.Cloud.service.util.FileManagementServiceUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.control.MappingControl;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -88,9 +89,10 @@ public class FileManagementServiceImpl implements FileManagementService {
         return "main-page";
     }
 
-//         Получить список всех файлов в бакете
 
-    public List<String> listAllFiles(String bucketName) {
+    //         Получить список всех файлов в бакете
+    @Override
+    public List<String> listAllFiles(UserDto userDto) {
         List<String> fileNames = new ArrayList<>();
 
         try {

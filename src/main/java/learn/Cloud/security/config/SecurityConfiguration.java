@@ -28,18 +28,18 @@ public class SecurityConfiguration {
     private final JwtAuthentificationFilter jwtAuthFilter;
     private final UserDetailsService userDetailService;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
+//    @Bean
+//    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
 
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .build();
+//        return http
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+//                .build();
 //        return http
 //                .csrf(AbstractHttpConfigurer::disable)
 //                .authorizeHttpRequests(
 //                        req->req.requestMatchers(
-//                                        "/api/v1/auth/**",
+//                                        "/**",
 //                                        "/swagger-ui.html",
 //                                        "/swagger-ui/**",
 //                                        "/v3/api-docs/**",
@@ -58,6 +58,16 @@ public class SecurityConfiguration {
 //                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //                .addFilterBefore(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class)
 //                .build();
+//    }
+    @Bean
+    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()  // ✅ ВСЕ разрешено
+                )
+                // ❌ ВСЕ JWT НАСТРОЙКИ УДАЛЕНЫ
+                .build();
     }
-
 }
+

@@ -1,7 +1,11 @@
 package learn.Cloud.controllers;//package com.weather.web.project.weather.controllers;
 
+import learn.Cloud.model.UserDto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Slf4j
@@ -28,8 +32,18 @@ public class RedirectFormControllers {
 
     }
     @GetMapping("/main-page")
-    public String mainPage() {
-        log.info("enter main page");
+    public String mainPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        log.info("=== ЗАГРУЗКА MAIN-PAGE ===");
+
+        // ✅ СОЗДАЕМ ТЕСТОВОГО ПОЛЬЗОВАТЕЛЯ
+        UserDto testUser = new UserDto();
+        testUser.setFirstName("Тест");
+        testUser.setLastName("Тестовый");
+        testUser.setEmail("test@test.com");
+
+        // ✅ ДОБАВЛЯЕМ В МОДЕЛЬ
+        model.addAttribute("userDto", testUser);
+        model.addAttribute("locationCount", 0);
         return "main-page";
 
     }
