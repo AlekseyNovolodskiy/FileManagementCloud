@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Мой облачный диск</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #f0f0f0; padding: 10px; margin-bottom: 20px; }
+        .folder-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .folder-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .folder-card:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .folder-icon { font-size: 48px; text-align: center; margin-bottom: 10px; }
+        .folder-name { font-weight: bold; text-align: center; }
+        .folder-info { font-size: 12px; color: #666; text-align: center; margin-top: 5px; }
+        .create-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+        }
+        .breadcrumb {
+            padding: 10px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .breadcrumb a {
+            color: #2196f3;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary { background: #2196f3; color: white; }
+        .btn-primary:hover { background: #1976d2; }
+        input[type=text] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 300px;
+            margin-right: 10px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Мой облачный диск</h1>
+</div>
+
+<!-- Форма создания новой папки -->
+<div class="create-form">
+    <h3>Создать новую папку</h3>
+    <form th:action="@{/ui/folders/create}" method="post">
+        <input type="text" name="name" placeholder="Введите название папки" required />
+        <input type="hidden" name="parentId" th:value="${parentId}" />
+        <button type="submit" class="btn btn-primary">Создать папку</button>
+    </form>
+</div>
+
+<!-- Навигация (хлебные крошки) -->
+<div class="breadcrumb">
+    <a th:href="@{/ui/folders}">Корень</a>
+    <span th:if="${currentFolder}"> / <span th:text="${currentFolder.name}"></span></span>
+</div>
+
+<!-- Список папок -->
+<h2 th:if="${currentFolder}" th:text="'Папка: ' + ${currentFolder.name}">Папка</h2>
+<h2 th:if="!${currentFolder}">Корневые папки</h2>
+
+<div th:if="${folders != null and !folders.empty}" class="folder-grid">
+    <div th:each="folder : ${folders}" class="folder-card"
+         onclick="window.location.href='/ui/folders/' + '[[${folder.id}]]'">
+        <div class="folder-icon">📁</div>
+        <div class="folder-name" th:text="${folder.name}">Название</div>
+        <div class="folder-info">
+            <span th:text="${#temporals.format(folder.createdAt, 'dd.MM.yyyy')}">дата</span>
+        </div>
+    </div>
+</div>
+
+<!-- Если папок нет -->
+<div th:if="${folders == null or folders.empty}" class="empty-state">
+    <p>📁 В этой папке пока ничего нет</p>
+    <p>Создайте первую папку с помощью формы выше</p>
+</div>
+
+<!-- Кнопка назад (если мы не в корне) -->
+<div th:if="${currentFolder != null and currentFolder.parentId != null}"
+     style="margin-top: 20px;">
+    <a th:href="@{'/ui/folders/' + ${currentFolder.parentId}}" class="btn btn-primary">
+        ← Назад
+    </a>
+</div>
+<div th:if="${currentFolder != null and currentFolder.parentId == null}"
+     style="margin-top: 20px;">
+    <a th:href="@{/ui/folders}" class="btn btn-primary">
+        ← Назад к корневым папкам
+    </a>
+</div>
+</body>
+</html>

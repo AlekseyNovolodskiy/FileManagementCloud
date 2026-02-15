@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${currentFolder.name}">Папка</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #f0f0f0; padding: 10px; margin-bottom: 20px; }
+        .folder-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .folder-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .folder-card:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .folder-icon { font-size: 48px; text-align: center; margin-bottom: 10px; }
+        .folder-name { font-weight: bold; text-align: center; }
+        .folder-info { font-size: 12px; color: #666; text-align: center; margin-top: 5px; }
+        .create-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+        }
+        .breadcrumb {
+            padding: 10px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .breadcrumb a {
+            color: #2196f3;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary { background: #2196f3; color: white; }
+        .btn-primary:hover { background: #1976d2; }
+        input[type=text] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 300px;
+            margin-right: 10px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Мой облачный диск</h1>
+</div>
+
+<!-- Хлебные крошки -->
+<div class="breadcrumb">
+    <a th:href="@{/ui/folders}">Корень</a>
+    <span th:each="folder, iterStat : ${breadcrumbs}">
+        <span th:if="${!iterStat.first}"> → </span>
+        <span th:if="${iterStat.last}" th:text="${folder.name}"></span>
+        <a th:if="${!iterStat.last}" th:href="@{'/ui/folders/' + ${folder.id}}"
+           th:text="${folder.name}"></a>
+    </span>
+</div>
+
+<!-- Форма создания новой подпапки -->
+<div class="create-form">
+    <h3>Создать новую подпапку в папке <span th:text="${currentFolder.name}"></span></h3>
+    <form th:action="@{/ui/folders/create}" method="post">
+        <input type="text" name="name" placeholder="Введите название папки" required />
+        <input type="hidden" name="parentId" th:value="${parentId}" />
+        <button type="submit" class="btn btn-primary">Создать подпапку</button>
+    </form>
+</div>
+
+<!-- Список подпапок -->
+<h2 th:if="${subfolders != null and !subfolders.empty}">Подпапки</h2>
+
+<div th:if="${subfolders != null and !subfolders.empty}" class="folder-grid">
+    <div th:each="folder : ${subfolders}" class="folder-card"
+         onclick="window.location.href='/ui/folders/' + '[[${folder.id}]]'">
+        <div class="folder-icon">📁</div>
+        <div class="folder-name" th:text="${folder.name}">Название</div>
+        <div class="folder-info">
+            <span th:text="${#temporals.format(folder.createdAt, 'dd.MM.yyyy')}">дата</span>
+        </div>
+    </div>
+</div>
+
+<!-- Если подпапок нет -->
+<div th:if="${subfolders == null or subfolders.empty}" class="empty-state">
+    <p>📁 В этой папке пока нет подпапок</p>
+    <p>Создайте первую подпапку с помощью формы выше</p>
+</div>
+
+<!-- Кнопка назад -->
+<div style="margin-top: 20px;">
+    <a th:if="${currentFolder.parentId != null}"
+       th:href="@{'/ui/folders/' + ${currentFolder.parentId}}"
+       class="btn btn-primary">
+        ← Назад
+    </a>
+    <a th:if="${currentFolder.parentId == null}"
+       th:href="@{/ui/folders}"
+       class="btn btn-primary">
+        ← Назад к корневым папкам
+    </a>
+</div>
+
+<!-- Форма выхода -->
+<form action="/logout" method="post" style="margin-top: 20px;">
+    <button type="submit" class="btn" style="background: #f44336; color: white;">Выйти</button>
+</form>
+</body>
+</html>
