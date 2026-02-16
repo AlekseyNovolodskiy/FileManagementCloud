@@ -8,7 +8,9 @@ import learn.Cloud.service.FileManagementService;
 import learn.Cloud.service.util.FileManagementServiceUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.control.MappingControl;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,7 @@ import static java.util.Objects.isNull;
 public class FileManagementServiceImpl implements FileManagementService {
 
 
+
     private final MinioClient minioClient;
     private final FileManagementServiceUtil fileManagementServiceUtil;
 
@@ -32,7 +35,7 @@ public class FileManagementServiceImpl implements FileManagementService {
 
     private void initBucket(String email) {
 
-        String bucketName = fileManagementServiceUtil.makeBucketName(email);
+        bucketName = fileManagementServiceUtil.makeBucketName(email);
         try {
 
             boolean bucketExists = minioClient.bucketExists(
@@ -62,7 +65,7 @@ public class FileManagementServiceImpl implements FileManagementService {
     @Override
     public String uploadFiles(UserDto userDto, MultipartFile file, Model model) {
 
-        model.addAttribute("firstname", userDto.getFirstName());
+        model.addAttribute("firstname", userDto.getEmail());
         if (isNull(userDto)) {
             throw new UserException("UserDto не может быть null");
         }
@@ -94,7 +97,7 @@ public class FileManagementServiceImpl implements FileManagementService {
     @Override
     public List<String> listAllFiles(UserDto userDto) {
         List<String> fileNames = new ArrayList<>();
-
+        initBucket(userDto.getEmail());
         try {
             Iterable<Result<Item>> results = minioClient.listObjects(
                     ListObjectsArgs.builder()
@@ -117,4 +120,28 @@ public class FileManagementServiceImpl implements FileManagementService {
         return fileNames;
     }
 
+
+    @Override
+    public Resource downloadFile(UserDetails userDetails, String fileName) {
+
+//        initBucket(userDetails.getUsername());
+        initBucket("string");
+        try {
+            // Получаем объект из MinIO
+            GetObjectResponse response = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(fileName)
+                            .build()
+            );
+
+            // Возвращаем как Resource
+            return new InputStreamResource(response);
+
+        } catch (Exception e) {
+            log.error("Ошибка скачивания файла {}: {}", fileName, e.getMessage());
+            throw new RuntimeException("Файл не найден: " + fileName, e);
+        }
+
+    }
 }

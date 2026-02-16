@@ -74,8 +74,8 @@
 <!-- Форма создания новой папки -->
 <div class="create-form">
     <h3>Создать новую папку</h3>
-    <form th:action="@{/ui/folders/create}" method="post">
-        <input type="text" name="name" placeholder="Введите название папки" required />
+    <form th:action="@{/ui/create}" method="post">
+        <input type="text" name="folderName" placeholder="Введите название папки" required />
         <input type="hidden" name="parentId" th:value="${parentId}" />
         <button type="submit" class="btn btn-primary">Создать папку</button>
     </form>

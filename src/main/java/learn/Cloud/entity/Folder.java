@@ -24,9 +24,4 @@ public class Folder {
     private String ownerId;
 
     private String path;  // денормализованный путь, например "/documents/work"
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    private List<SharedWith> sharedWith;
 }

@@ -8,66 +8,29 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-
-@EnableGlobalMethodSecurity(
-        prePostEnabled = true,
-        securedEnabled = true,
-        jsr250Enabled = true
-)
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-
     private final JwtAuthentificationFilter jwtAuthFilter;
     private final UserDetailsService userDetailService;
+    private final AuthenticationProvider authenticationProvider;
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
-
-//        return http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-//                .build();
-//        return http
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(
-//                        req->req.requestMatchers(
-//                                        "/**",
-//                                        "/swagger-ui.html",
-//                                        "/swagger-ui/**",
-//                                        "/v3/api-docs/**",
-//                                        "/v3/api-docs.yaml",
-//                                        "/swagger-resources/**",
-//                                        "/swagger-resources",
-//                                        "/webjars/**",
-//                                        "/configuration/ui",
-//                                        "/configuration/security"
-//                                )
-//                                .permitAll()
-//                                .anyRequest()
-//                                .authenticated()
-//                ).userDetailsService(userDetailService)
-//                .sessionManagement(session->session
-//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .addFilterBefore(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class)
-//                .build();
-//    }
     @Bean
-    public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()  // ✅ ВСЕ разрешено
+                        .anyRequest().permitAll()  // ВСЕ разрешено
                 )
-                // ❌ ВСЕ JWT НАСТРОЙКИ УДАЛЕНЫ
+                // Добавляем фильтр, но он не будет блокировать запросы
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
-
