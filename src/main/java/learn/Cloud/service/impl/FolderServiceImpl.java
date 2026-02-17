@@ -32,39 +32,48 @@ public class FolderServiceImpl implements FolderService {
         UserEntityInfo userbyEmail = userRepository.findByEmail(userDto.getEmail())
                 .orElseThrow(()->new UserException("User Not found",HttpStatus.NOT_FOUND));
 
-
         Folder newFolder = new Folder();
-        newFolder.setName(folderName);
-        newFolder.setOwnerId(valueOf(userbyEmail.getId()));
-        newFolder.setParentId(parentId);
+
+        if (parentId != null && !parentId.isEmpty()) {
+            newFolder.setParentId(parentId);
+        } else {
+            newFolder.setParentId(null); // ВАЖНО: null, а не пустая строка!
+        }
 
         String path;
         if (parentId != null && !parentId.isEmpty()) {
-            // Находим родительскую папку для построения пути
+            // Вложенная папка
             Folder parentFolder = mongoFolderRepository.findById(parentId)
                     .orElseThrow(() -> new UserException("Parent folder not found"));
             path = parentFolder.getPath() + "/" + folderName;
         } else {
-            path = "/" + folderName;
+            // Корневая папка
+            path = "/" + folderName;  // "/Documents", "/Photos" и т.д.
         }
+
+        newFolder.setName(folderName);
+        newFolder.setOwnerId(valueOf(userbyEmail.getId()));
         newFolder.setPath(path);
 
         mongoFolderRepository.save(newFolder);
         log.info("Папка успешно сохранена с ID: {}, путь: {}",
-                savedFolder.getId(), savedFolder.getPath());
+                newFolder.getId(), newFolder.getPath());
     }
 
     @Override
     public List<Folder> getRootFolders(UserDto userDetails) {
         UserEntityInfo byEmail = userRepository.findByEmail(userDetails.getEmail())
                 .orElseThrow(()->new UserException("User not found"));
-        return  mongoFolderRepository.findByParentId(valueOf(byEmail.getId()));
+        return  mongoFolderRepository.findByOwnerIdAndParentIdIsNull(valueOf(byEmail.getId()));
 
     }
 
     @Override
     public Folder getFolder(String folderId, UserDetails userDetails) {
-        UserEntityInfo byEmail = userRepository.findByEmail(userDetails.getUsername())
+
+
+
+        UserEntityInfo byEmail = userRepository.findByEmail("string")
                 .orElseThrow(()->new UserException("User not found"));
         return mongoFolderRepository.findFolderByIdAndOwnerId(folderId,valueOf(byEmail.getId()));
     }

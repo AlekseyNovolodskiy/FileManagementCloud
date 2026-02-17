@@ -92,13 +92,11 @@
 <h2 th:if="!${currentFolder}">Корневые папки</h2>
 
 <div th:if="${folders != null and !folders.empty}" class="folder-grid">
-    <div th:each="folder : ${folders}" class="folder-card"
-         onclick="window.location.href='/ui/folders/' + '[[${folder.id}]]'">
-        <div class="folder-icon">📁</div>
-        <div class="folder-name" th:text="${folder.name}">Название</div>
-        <div class="folder-info">
-            <span th:text="${#temporals.format(folder.createdAt, 'dd.MM.yyyy')}">дата</span>
-        </div>
+    <div th:each="folder : ${folders}" class="folder-card">
+        <a th:href="@{'/ui/folders/' + ${folder.id}}" style="text-decoration: none; color: inherit; display: block;">
+            <div class="folder-icon">📁</div>
+            <div class="folder-name" th:text="${folder.name}">Название</div>
+        </a>
     </div>
 </div>
 
@@ -108,18 +106,5 @@
     <p>Создайте первую папку с помощью формы выше</p>
 </div>
 
-<!-- Кнопка назад (если мы не в корне) -->
-<div th:if="${currentFolder != null and currentFolder.parentId != null}"
-     style="margin-top: 20px;">
-    <a th:href="@{'/ui/folders/' + ${currentFolder.parentId}}" class="btn btn-primary">
-        ← Назад
-    </a>
-</div>
-<div th:if="${currentFolder != null and currentFolder.parentId == null}"
-     style="margin-top: 20px;">
-    <a th:href="@{/ui/folders}" class="btn btn-primary">
-        ← Назад к корневым папкам
-    </a>
-</div>
 </body>
 </html>
