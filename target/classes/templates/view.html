@@ -96,13 +96,12 @@
 <h2 th:if="${subfolders != null and !subfolders.empty}">Подпапки</h2>
 
 <div th:if="${subfolders != null and !subfolders.empty}" class="folder-grid">
-    <div th:each="folder : ${subfolders}" class="folder-card"
-         onclick="window.location.href='/ui/folders/' + '[[${folder.id}]]'">
-        <div class="folder-icon">📁</div>
-        <div class="folder-name" th:text="${folder.name}">Название</div>
-        <div class="folder-info">
-            <span th:text="${#temporals.format(folder.createdAt, 'dd.MM.yyyy')}">дата</span>
-        </div>
+    <div th:each="folder : ${subfolders}" class="folder-card">
+        <a th:href="@{'/ui/folders/' + ${folder.id}}"
+           style="text-decoration: none; color: inherit; display: block;">
+            <div class="folder-icon">📁</div>
+            <div class="folder-name" th:text="${folder.name}">Название</div>
+        </a>
     </div>
 </div>
 

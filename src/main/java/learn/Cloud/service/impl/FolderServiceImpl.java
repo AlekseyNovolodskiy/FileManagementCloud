@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
 
@@ -71,8 +72,6 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public Folder getFolder(String folderId, UserDetails userDetails) {
 
-
-
         UserEntityInfo byEmail = userRepository.findByEmail("string")
                 .orElseThrow(()->new UserException("User not found"));
         return mongoFolderRepository.findFolderByIdAndOwnerId(folderId,valueOf(byEmail.getId()));
@@ -80,7 +79,21 @@ public class FolderServiceImpl implements FolderService {
 
     @Override
     public List<Folder> getSubfolders(String folderId, UserDetails userDetails) {
-        return List.of();
+        log.info("Получение подпапок для папки ID: {}", folderId);
+
+        // Получаем пользователя
+        UserEntityInfo user = userRepository.findByEmail("string")
+                .orElseThrow(() -> new UserException("User not found"));
+
+        // Ищем все папки, у которых parentId = folderId
+        List<Folder> subfolders = mongoFolderRepository.findByParentId(folderId);
+        log.info("Найдено подпапок: {}", subfolders.size());
+
+        // Фильтруем по владельцу (для безопасности)
+        String ownerId = String.valueOf(user.getId());
+        return subfolders.stream()
+                .filter(f -> f.getOwnerId().equals(ownerId))
+                .collect(Collectors.toList());
     }
 
     @Override
