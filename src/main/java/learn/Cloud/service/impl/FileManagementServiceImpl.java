@@ -2,8 +2,14 @@ package learn.Cloud.service.impl;
 
 import io.minio.*;
 import io.minio.messages.Item;
+import learn.Cloud.entity.FileMetaDataInfo;
+import learn.Cloud.entity.Folder;
+import learn.Cloud.entity.UserEntityInfo;
 import learn.Cloud.exception.UserException;
 import learn.Cloud.model.UserDto;
+import learn.Cloud.repository.FileMetaDataRepository;
+import learn.Cloud.repository.FolderRepository;
+import learn.Cloud.repository.UserRepository;
 import learn.Cloud.service.FileManagementService;
 import learn.Cloud.service.util.FileManagementServiceUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +25,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.valueOf;
 import static java.util.Objects.isNull;
 
 @Service
@@ -27,9 +34,11 @@ import static java.util.Objects.isNull;
 public class FileManagementServiceImpl implements FileManagementService {
 
 
-
     private final MinioClient minioClient;
     private final FileManagementServiceUtil fileManagementServiceUtil;
+    private final FileMetaDataRepository fileMetaDataRepository;
+    private final UserRepository userRepository;
+    private final FolderRepository folderRepository;
 
     private String bucketName;
 
@@ -63,13 +72,31 @@ public class FileManagementServiceImpl implements FileManagementService {
     }
 
     @Override
-    public String uploadFiles(UserDto userDto, MultipartFile file, Model model) {
+    public String uploadFiles(UserDetails userDetails, MultipartFile file, Model model, String folderId) {
+        UserDto userDto1 = new UserDto();
+        userDto1.setEmail("string");
 
-        model.addAttribute("firstname", userDto.getEmail());
-        if (isNull(userDto)) {
+        if (isNull(userDto1)) {
             throw new UserException("UserDto не может быть null");
         }
-        initBucket(userDto.getEmail());
+        UserEntityInfo userEntityInfo = userRepository.findByEmail(userDto1.getEmail())
+                .orElseThrow(()-> new UserException("User not found"));
+
+        Folder folderByIdAndOwnerId = folderRepository.findFolderByIdAndOwnerId(folderId, valueOf(userEntityInfo.getId()));
+
+        if (folderByIdAndOwnerId == null) {
+            throw new UserException("Папка не найдена или доступ запрещен");
+        }
+        FileMetaDataInfo fileMetaDataInfo = new FileMetaDataInfo();
+        fileMetaDataInfo.setFolderId(folderId);
+        fileMetaDataInfo.setOwnerId(String.valueOf(userEntityInfo.getId()));
+        fileMetaDataInfo.setMinioPath(folderByIdAndOwnerId.getPath());
+        fileMetaDataInfo.setName(file.getOriginalFilename());
+        fileMetaDataRepository.save(fileMetaDataInfo);
+
+        model.addAttribute("firstname", "string");
+
+        initBucket(userDto1.getEmail());
         String filename = file.getOriginalFilename();
 
         try (InputStream inputStream = file.getInputStream()) {
@@ -93,7 +120,7 @@ public class FileManagementServiceImpl implements FileManagementService {
     }
 
 
-    //         Получить список всех файлов в бакете
+
     @Override
     public List<String> listAllFiles(UserDto userDto) {
         List<String> fileNames = new ArrayList<>();

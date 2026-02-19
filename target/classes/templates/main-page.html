@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Страница пользователя</title>
+    <title>Мой облачный диск</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* ===== ОСНОВНЫЕ СТИЛИ ===== */
@@ -30,6 +30,9 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
         }
 
         .user-info {
@@ -101,6 +104,14 @@
             color: white;
         }
 
+        .nav-section {
+            font-size: 11px;
+            color: #999;
+            margin: 20px 0 5px 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .file-row {
             display: flex;
             gap: 10px;
@@ -121,14 +132,10 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
+            text-decoration: none;
         }
 
         .file-btn:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        .file-btn.active {
             background: #667eea;
             color: white;
         }
@@ -158,143 +165,52 @@
         /* ===== КОНТЕНТ ===== */
         .content {
             flex: 1;
+            margin-left: 280px;
             background: #fafafa;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .content-header {
-            margin-bottom: 30px;
-        }
-
-        .content-title {
-            font-size: 28px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        /* ===== СТИЛИ ДЛЯ ФАЙЛОВ ===== */
-        .upload-container {
-            max-width: 600px;
-            margin: 0 auto;
             padding: 20px;
+            min-height: 100vh;
         }
 
-        .upload-area {
+        .iframe-container {
             background: white;
-            border: 2px dashed #667eea;
-            border-radius: 15px;
-            padding: 40px 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            height: calc(100vh - 40px);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
         }
 
-        .upload-area:hover {
-            border-color: #764ba2;
-            background: linear-gradient(135deg, #667eea10, #764ba210);
-        }
-
-        .upload-area i {
-            font-size: 48px;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .upload-area h3 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .upload-area p {
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+        iframe {
+            width: 100%;
+            height: 100%;
             border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .files-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .file-card {
             background: white;
-            border: 1px solid #eee;
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            position: relative;
-            text-align: center;
         }
 
-        .file-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);
-        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
 
-        .file-icon {
-            font-size: 36px;
-            margin-bottom: 12px;
-        }
+            .content {
+                margin-left: 0;
+            }
 
-        .file-name {
-            font-size: 14px;
-            color: #333;
-            word-break: break-all;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
+            .dashboard {
+                flex-direction: column;
+            }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            background: white;
-            border-radius: 12px;
-            margin-top: 20px;
-        }
-
-        .empty-state i {
-            font-size: 64px;
-            color: #ddd;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 20px;
-        }
-
-        .empty-state p {
-            color: #666;
-            margin-bottom: 25px;
+            .iframe-container {
+                height: calc(100vh - 320px);
+            }
         }
     </style>
 </head>
 <body>
 <div class="dashboard">
-    <!-- ЛЕВАЯ КОЛОНКА -->
+    <!-- САЙДБАР -->
     <div class="sidebar">
         <div class="user-info">
             <div class="user-avatar">
@@ -310,34 +226,39 @@
         </div>
 
         <div class="nav-menu">
-            <!-- Главная кнопка -->
-            <button id="homeBtn" class="nav-link active">
-                <i class="fas fa-home"></i> Главная
-            </button>
+            <div class="nav-section">НАВИГАЦИЯ</div>
 
-            <div style="font-size: 11px; color: #999; margin: 10px 0 5px 10px;">ФАЙЛЫ</div>
+            <!-- Кнопки навигации - открываются в iframe -->
+            <a href="/ui/folders" target="content-frame" class="nav-link" onclick="setActive(this)">
+                <i class="fas fa-home"></i> Главная
+            </a>
+
+            <div class="nav-section">ДЕЙСТВИЯ</div>
 
             <div class="file-row">
-                <button id="uploadBtn" class="file-btn">
+                <a href="#" onclick="document.getElementById('fileUpload').click(); return false;" class="file-btn">
                     <i class="fas fa-upload"></i> Загрузить
-                </button>
-                <button id="filesBtn" class="file-btn">
-                    <i class="fas fa-list"></i> Список
-                </button>
+                </a>
+                <a href="#" onclick="refreshIframe(); return false;" class="file-btn">
+                    <i class="fas fa-sync-alt"></i> Обновить
+                </a>
             </div>
+
+            <!-- ФОРМА ЗАГРУЗКИ - ИСПРАВЛЕНО -->
+            <form id="uploadForm" action="/main/upload/root" method="post" enctype="multipart/form-data" target="content-frame">
+                <input type="file" id="fileUpload" name="file" style="display: none;" />
+            </form>
         </div>
 
         <div class="location-counter">
-            <div style="display: flex; justify-content: space-between;">
-                <span>Выбрано локаций:</span>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span><i class="fas fa-map-marker-alt" style="color: #667eea;"></i> Использовано локаций:</span>
                 <span class="counter" th:text="${locationCount != null ? locationCount : 0}">0</span>
             </div>
-            <div style="margin-top: 10px;">
-                <span>Максимум: 5</span>
-                <div class="progress-bar">
-                    <div class="progress-fill"
-                         th:style="'width: ' + (${locationCount != null ? (locationCount / 5) * 100 : 0}) + '%;'">
-                    </div>
+            <div>из 5 доступных</div>
+            <div class="progress-bar">
+                <div class="progress-fill"
+                     th:style="'width: ' + (${locationCount != null ? (locationCount / 5) * 100 : 0}) + '%;'">
                 </div>
             </div>
         </div>
@@ -349,149 +270,84 @@
         </form>
     </div>
 
-    <!-- ПРАВАЯ КОЛОНКА -->
-    <div class="content" id="content-frame">
-        <div class="content-header">
-            <h2 class="content-title" id="content-title">Главная</h2>
-        </div>
-        <div class="content-body" id="content-body">
-            <div style="text-align: center; padding: 40px 20px;">
-                <i class="fas fa-cloud-sun" style="font-size: 80px; color: #667eea; margin-bottom: 20px;"></i>
-                <h3 style="color: #333; margin-bottom: 20px;">Добро пожаловать в облачное хранилище!</h3>
-                <p style="color: #666; max-width: 600px; margin: 0 auto;">
-                    Используйте меню слева для навигации.
-                </p>
-            </div>
+    <!-- ОСНОВНОЙ КОНТЕНТ - IFRAME -->
+    <div class="content">
+        <div class="iframe-container">
+            <iframe name="content-frame" id="content-frame"
+                    src="/ui/folders"
+                    frameborder="0"></iframe>
         </div>
     </div>
 </div>
 
+<!-- ВЕСЬ JAVASCRIPT В ОДНОМ МЕСТЕ -->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const homeBtn = document.getElementById('homeBtn');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const filesBtn = document.getElementById('filesBtn');
-        const contentTitle = document.getElementById('content-title');
-        const contentBody = document.getElementById('content-body');
+    // Функция обновления iframe
+    function refreshIframe() {
+        const iframe = document.getElementById('content-frame');
+        iframe.src = iframe.src;
+        console.log('Iframe обновлен');
+    }
 
-        function removeActiveClass() {
-            document.querySelectorAll('.nav-link, .file-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-        }
-
-        // Главная кнопка
-        if (homeBtn) {
-            homeBtn.addEventListener('click', function() {
-                removeActiveClass();
-                this.classList.add('active');
-
-                contentTitle.textContent = 'Главная';
-                contentBody.innerHTML = `
-                    <div style="text-align: center; padding: 40px 20px;">
-                        <i class="fas fa-cloud-sun" style="font-size: 80px; color: #667eea; margin-bottom: 20px;"></i>
-                        <h3 style="color: #333; margin-bottom: 20px;">Добро пожаловать в облачное хранилище!</h3>
-                        <p style="color: #666; max-width: 600px; margin: 0 auto;">
-                            Используйте меню слева для навигации.
-                        </p>
-                    </div>
-                `;
-            });
-        }
-
-        // Кнопка загрузки
-        if (uploadBtn) {
-            uploadBtn.addEventListener('click', function() {
-                removeActiveClass();
-                this.classList.add('active');
-
-                contentTitle.textContent = 'Загрузка файла';
-                contentBody.innerHTML = `
-                    <div class="upload-container">
-                        <div class="upload-area">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <h3>Загрузить новый файл</h3>
-                            <p>Выберите файл для загрузки</p>
-
-                            <form action="/main/upload" method="POST" enctype="multipart/form-data">
-                                <input type="file" name="file" required style="margin: 10px 0;">
-                                <button type="submit" class="btn-primary">
-                                    <i class="fas fa-upload"></i> Загрузить
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        // Кнопка списка файлов
-if (filesBtn) {
-    filesBtn.addEventListener('click', function() {
-        removeActiveClass();
-        this.classList.add('active');
-
-        contentTitle.textContent = 'Мои файлы';
-        contentBody.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><h3>Загрузка...</h3></div>';
-
-        // Добавим таймаут и обработку ошибок
-        fetch('/main/all-files', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            console.log('Статус ответа:', response.status);
-            if (!response.ok) {
-                throw new Error('Ошибка сервера: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(files => {
-            console.log('Получены файлы:', files);
-
-            if (!files || files.length === 0) {
-                contentBody.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-file"></i>
-                        <h3>У вас пока нет файлов</h3>
-                        <p>Нажмите "Загрузить" чтобы добавить первый файл</p>
-                    </div>
-                `;
-            } else {
-                let html = '<div class="files-grid">';
-                files.forEach(file => {
-                    html += `
-    <div class="file-card">
-        <div class="file-icon">📄</div>
-        <div class="file-name">${file}</div>
-        <a href="/main/download?fileName=${encodeURIComponent(file)}"
-           class="btn-primary"
-           style="font-size: 12px; padding: 8px 16px; text-decoration: none; display: inline-block;">
-            <i class="fas fa-download"></i> Скачать
-        </a>
-    </div>
-`;
-                });
-                html += '</div>';
-                contentBody.innerHTML = html;
-            }
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            contentBody.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <h3>Ошибка загрузки списка файлов</h3>
-                    <p>${error.message}</p>
-                    <button onclick="location.reload()" class="btn-primary" style="margin-top: 20px;">Обновить страницу</button>
-                </div>
-            `;
+    // Функция для подсветки активного пункта меню
+    function setActive(element) {
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
         });
-    });
-}
+        element.classList.add('active');
+    }
+
+    // ПОЛНАЯ ФУНКЦИЯ ЗАГРУЗКИ
+    function submitUploadForm() {
+        const fileInput = document.getElementById('fileUpload');
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert('Выберите файл');
+            return;
+        }
+
+        const file = fileInput.files[0];
+        console.log('📁 Выбран файл:', file.name);
+
+        // Получаем текущий folderId из iframe
+        let folderId = 'root';
+        try {
+            const iframe = document.getElementById('content-frame');
+            const iframeUrl = iframe.contentWindow.location.pathname;
+            console.log('URL iframe:', iframeUrl);
+
+            if (iframeUrl.includes('/ui/folders/')) {
+                folderId = iframeUrl.split('/ui/folders/')[1];
+            } else if (iframeUrl.includes('/ui/display-files/')) {
+                folderId = iframeUrl.split('/ui/display-files/')[1];
+            }
+        } catch (e) {
+            console.log('Не удалось получить URL iframe:', e);
+        }
+
+        // Обновляем action формы
+        const form = document.getElementById('uploadForm');
+        form.action = '/main/upload/' + folderId;
+
+        console.log('🚀 Отправка файла в папку:', folderId);
+        console.log('📤 URL:', form.action);
+
+        // Отправляем форму
+        form.submit();
+
+        // Показываем сообщение
+        alert('Загрузка файла ' + file.name + ' в папку ' + folderId);
+    }
+
+    // Привязываем функцию к событию change
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('fileUpload');
+        if (fileInput) {
+            fileInput.addEventListener('change', submitUploadForm);
+        }
+
+        // Устанавливаем активный пункт меню
+        document.querySelector('a[href="/ui/folders"]').classList.add('active');
     });
 </script>
 </body>

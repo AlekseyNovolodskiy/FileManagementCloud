@@ -37,9 +37,9 @@ public class RedirectFormControllers {
 
         // ✅ СОЗДАЕМ ТЕСТОВОГО ПОЛЬЗОВАТЕЛЯ
         UserDto testUser = new UserDto();
-        testUser.setFirstName("Тест");
-        testUser.setLastName("Тестовый");
-        testUser.setEmail("test@test.com");
+        testUser.setFirstName("string");
+        testUser.setLastName("string");
+        testUser.setEmail("string");
 
         // ✅ ДОБАВЛЯЕМ В МОДЕЛЬ
         model.addAttribute("userDto", testUser);

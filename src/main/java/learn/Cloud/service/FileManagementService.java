@@ -9,7 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface FileManagementService {
-    String uploadFiles(UserDto userDto, MultipartFile file, Model model);
+
+    String uploadFiles(UserDetails userDetails, MultipartFile file, Model model, String folderId);
+
     List<String> listAllFiles(UserDto userDto);
 
     Resource downloadFile(UserDetails userDetails, String fileName);

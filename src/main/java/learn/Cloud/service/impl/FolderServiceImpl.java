@@ -69,6 +69,7 @@ public class FolderServiceImpl implements FolderService {
 
     }
 
+    //todo
     @Override
     public Folder getFolder(String folderId, UserDetails userDetails) {
 
@@ -77,6 +78,7 @@ public class FolderServiceImpl implements FolderService {
         return mongoFolderRepository.findFolderByIdAndOwnerId(folderId,valueOf(byEmail.getId()));
     }
 
+    //todo
     @Override
     public List<Folder> getSubfolders(String folderId, UserDetails userDetails) {
         log.info("Получение подпапок для папки ID: {}", folderId);

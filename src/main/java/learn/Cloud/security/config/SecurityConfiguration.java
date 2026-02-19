@@ -28,9 +28,16 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()  // ВСЕ разрешено
                 )
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions
+                                        .sameOrigin()  // Разрешает iframe с того же домена
+                                // Или .disable() чтобы полностью отключить защиту
+                        )
+                )
                 // Добавляем фильтр, но он не будет блокировать запросы
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
+

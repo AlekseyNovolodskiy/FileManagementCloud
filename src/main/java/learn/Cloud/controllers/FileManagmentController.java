@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -29,22 +30,42 @@ public class FileManagmentController {
 
     private final MinioService minioService;
 
-    @PostMapping("/upload")
-    public String uploadFile(@AuthenticationPrincipal UserDto userDto, MultipartFile file, Model model) {
-
-        UserDto userDto1 = new UserDto();
-        userDto1.setEmail("string");
-        userDto1.setPassword("string");
+    //    @PostMapping("/upload")
+//    public String uploadFile(@AuthenticationPrincipal UserDto userDto, MultipartFile file, Model model) {
+//
+//        UserDto userDto1 = new UserDto();
+//        userDto1.setEmail("string");
+//        userDto1.setPassword("string");
+//
+//        try {
+//
+//            fileManagementService.uploadFiles(userDto1, file, model);
+//        } catch (Exception e) {
+//            log.error("Ошибка загрузки файла", e.getMessage());
+//
+//        }
+//
+//        return "main-page";
+//    }
+    @PostMapping("/upload/{folderId}")
+    public String uploadFile(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam("file") MultipartFile file,
+            RedirectAttributes redirectAttributes
+            , Model model
+            , @PathVariable String folderId) {
 
         try {
-
-            fileManagementService.uploadFiles(userDto1, file, model);
+            fileManagementService.uploadFiles(userDetails, file, model, folderId);
+            redirectAttributes.addFlashAttribute("success", "Файл успешно загружен");
         } catch (Exception e) {
-            log.error("Ошибка загрузки файла", e.getMessage());
-
+            log.error("Ошибка загрузки файла", e);
+            redirectAttributes.addFlashAttribute("error", "Ошибка загрузки: " + e.getMessage());
         }
 
-        return "main-page";
+        // Редирект обратно на предыдущую страницу
+        return "redirect:" + (redirectAttributes.getAttribute("redirectUrl") != null ?
+                redirectAttributes.getAttribute("redirectUrl") : "/ui/folders");
     }
 
     @GetMapping("/all-files")

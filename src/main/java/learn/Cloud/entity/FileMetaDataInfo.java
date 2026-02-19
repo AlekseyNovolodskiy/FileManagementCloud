@@ -23,7 +23,5 @@ public class FileMetaDataInfo {
 
     private String minioPath;    // путь в MinIO
 
-    // Гибкие метаданные для разных типов файлов
-    private Map<String, Object> metadata;
 }
 
